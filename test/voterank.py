@@ -83,7 +83,7 @@ nameDic = {
     "66": "(폴인럽) 졸린꿈"
 }
 
-# 결과 파일을 읽어서 딕셔너리의 리스트로 만든다.
+# 결과 파일을 읽어서 딕셔너리의 리스트로 만든다..
 with open('C:/Users/HANJUN/PycharmProjects/test/result.txt', 'r') as f:
     lines = f.readlines()
     datalist = list(map(lineToDic, lines))
