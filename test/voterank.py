@@ -41,7 +41,33 @@ def getTotalRanks(mdic):
     ranks.reverse()
     return [ (k+1,v[0],nameDic[v[0]],v[1]) for k,v  in enumerate(ranks) ]
 
-
+# input : id  output : print (8회) (입덕시기, (순위, 곡이름, 점수), 인원수)
+def printRank1():
+    print("")
+    id = ""
+    while id != "Q":
+        id = input(">>")
+        if id != "Q":
+            for a1 in range(8):
+                flst = [d for d in filter(lambda d: d["q1"]==a1+1 , datalist)]
+                msdic = createMusicCountDic(flst)
+                if id in msdic.keys():
+                    totranks = getTotalRanks(msdic)
+                    totdic = {id: (rank, name, point) for rank, id, name, point in totranks}
+                    print(a1+1,totdic[id],len(flst))
+                else:
+                    print("곡아이디를 찾을 수 없습니다.")
+# input : id  output : print  (입, (순위, 곡이름, 점수), 인원수)
+def printRank2():
+    print("")
+    id = ""
+    while id != "Q":
+        id = input(">>")
+        if id != "Q":
+            if id in musicDic.keys():
+                print(totalDic[id],"\n", musicDic[id])
+            else:
+                print("곡아이디를 찾을 수 없습니다.")
 # 곡아이디와 명칭을 매칭하는 딕셔너리
 nameDic = {
     "11": "(걸인베) Candy Jelly Love",
@@ -116,22 +142,5 @@ print("데이터 갯수 : ","%3d/%3d" % (len(filteredList),len(datalist)))
 for rank in  totalRanks:
     print(rank)
 
-# 곡 아이디를 입력받아서 순위 딕셔너러를 출력한다.
-print("")
-id = ""
-while id != "Q":
-    id = input(">>")
-    if id != "Q":
-        #if id in musicDic.keys():
-        #    print(totalDic[id],"\n", musicDic[id])
-        #else:
-        #    print("곡아이디를 찾을 수 없습니다.")
-        for a1 in range(8):
-            flst = [d for d in filter(lambda d: d["q1"]==a1+1 , datalist)]
-            msdic = createMusicCountDic(flst)
-            if id in msdic.keys():
-                totranks = getTotalRanks(msdic)
-                totdic = {id: (rank, name, point) for rank, id, name, point in totranks}
-                print(a1+1,totdic[id],len(flst))
-            else:
-                print("곡아이디를 찾을 수 없습니다.")
+#출력부
+printRank2()
