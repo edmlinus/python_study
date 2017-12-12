@@ -48,16 +48,16 @@ def printRank1():
     while id != "Q":
         id = input(">>")
         if id != "Q":
-            for a1 in range(8):
-                flst = [d for d in filter(lambda d: d["q1"]==a1+1 , datalist)]
+            for i in timeDic.keys():
+                flst = [d for d in filter(lambda d: d["q1"] == int(i), datalist)]
                 msdic = createMusicCountDic(flst)
                 if id in msdic.keys():
                     totranks = getTotalRanks(msdic)
                     totdic = {id: (rank, name, point) for rank, id, name, point in totranks}
-                    print(a1+1,totdic[id],len(flst))
+                    print("{}입덕 {}명 : 순위={}, 곡={}, 점수={}".format(timeDic[i],len(flst), *totdic[id]))
                 else:
                     print("곡아이디를 찾을 수 없습니다.")
-# input : id  output : print  (입, (순위, 곡이름, 점수), 인원수)
+# input : id  output : print  (입덕시기, (순위, 곡이름, 점수), 인원수)
 def printRank2():
     print("")
     id = ""
@@ -68,6 +68,33 @@ def printRank2():
                 print(totalDic[id],"\n", musicDic[id])
             else:
                 print("곡아이디를 찾을 수 없습니다.")
+# input : albumName output : print (앨범이름 : 총합)
+def printRank3():
+    print(" ")
+    id = ""
+    while id != "Q":
+        id = input(">>")
+        if id != "Q":
+            if id in totalAlbumDic.keys():
+                print("{} : {}".format(id,totalAlbumDic[id]))
+            else:
+                print("앨범아이디를 찾을 수 없습니다")
+# input : albumName output : print(x8) (앨범이름,입덕시기:순위)
+def printRank4():
+    print(" ")
+    id = ""
+    while id != "Q":
+        id = input(">>")
+        if id != "Q":
+            if id in albumDic.keys():
+                for i in timeDic.keys():
+                    flst = [d for d in filter(lambda d: d["q1"] == int(i), datalist)]
+                    msdic = createMusicCountDic(flst)
+                    totranks = getTotalRanks(msdic)
+                    totAlbumDic = getAlbumPoint(totranks)
+                    print("{} 입덕 : {}x{}명".format(timeDic[i],int(totAlbumDic[id]/len(flst)),len(flst)))
+            else:
+                print("앨범아이디를 찾을 수 없습니다")
 # 곡아이디와 명칭을 매칭하는 딕셔너리
 nameDic = {
     "11": "(걸인베) Candy Jelly Love",
@@ -108,13 +135,36 @@ nameDic = {
     "65": "(폴인럽) FALLIN'",
     "66": "(폴인럽) 졸린꿈"
 }
+#입덕시기와 앨범을 매치하는 딕셔너리
+timeDic={
+    '1':"걸인베",
+    '2':"1집리팩",
+    '3':"럽8",
+    '4':"LVLNS",
+    '5':"뉴트릴",
+    '6':"RUR",
+    '7':"2집리팩",
+    '8':"폴인럽"
+}
+#곡아이디와 앨범을 매치하는 딕셔너리
+albumDic = {
+    "걸인베":('11','12','13','14'),
+    "1집리팩":('11','12','13','14','15','16'),
+    "럽8":('21','22','23','24','25','26'),
+    "LVLNS":('31','32','33'),
+    "뉴트릴":('41','42','43','44','45','46'),
+    "RUR":('53','54','55','56','57','58','59'),
+    "2집리팩":('51','52','53','54','55','56','57','58','59'),
+    "폴인럽":('61','62','63','64','65','66')
+}
 
 # 결과 파일을 읽어서 딕셔너리의 리스트로 만든다...
 with open('result.txt', 'r') as f:
     lines = f.readlines()
     datalist = list(map(lineToDic, lines))
 
-#
+
+
 # 데이터 필터들을 정의한다.
 f0 = lambda d : True # 모든 투표 데이터
 f1 = lambda d : len(d["q4"])==37 # 모든 순위를 결정한 투표 데이터
@@ -131,16 +181,31 @@ def createMusicCountDic(list):
         countRank(dic, data["q4"])
     return dic
 
+#input list [(rank,id,name,points)]
+#output dict {albumID:points.avg}
+# 앨범 별 총점을 계산한다
+def getAlbumPoint(datalist):
+    dic = {}
+    for _,id,_,point in datalist:
+        for album,songs in albumDic.items():
+            if id in songs :
+                if album in dic.keys():
+                    dic[album]+=point
+                else:
+                    dic[album]=point
+    return dic
+
 # 데이터리스트에 필터를 적용한 후 곡별 순위카운트 딕셔너리를 구한다.
 filteredList = [d for d in filter(f6, datalist)]
 musicDic = createMusicCountDic(filteredList)
 totalRanks = getTotalRanks(musicDic)
 totalDic = { id: (rank,name,point) for rank,id,name,point in totalRanks }
+totalAlbumDic = getAlbumPoint(totalRanks)
 
-# 총점 기준으로 순위를 계산하여 출력
+# 출력부
 print("데이터 갯수 : ","%3d/%3d" % (len(filteredList),len(datalist)))
-for rank in  totalRanks:
+for rank in totalRanks:
     print(rank)
 
-#출력부
-printRank2()
+print(totalAlbumDic)
+printRank4()
