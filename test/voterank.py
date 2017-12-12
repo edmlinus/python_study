@@ -91,7 +91,7 @@ def printRank4():
                     flst = [d for d in filter(lambda d: d["q1"] == int(i), datalist)]
                     msdic = createMusicCountDic(flst)
                     totranks = getTotalRanks(msdic)
-                    totAlbumDic = getAlbumPoint(totranks)
+                    totAlbumDic = getAlbumPoint(totranks,id)
                     print("{} 입덕 : {}x{}명".format(timeDic[i],int(totAlbumDic[id]/len(flst)),len(flst)))
             else:
                 print("앨범아이디를 찾을 수 없습니다")
@@ -181,18 +181,17 @@ def createMusicCountDic(list):
         countRank(dic, data["q4"])
     return dic
 
-#input list [(rank,id,name,points)]
+#input list [(rank,id,name,points)],id(str)
 #output dict {albumID:points.avg}
 # 앨범 별 총점을 계산한다
-def getAlbumPoint(datalist):
+def getAlbumPoint(datalist,name):
     dic = {}
     for _,id,_,point in datalist:
-        for album,songs in albumDic.items():
-            if id in songs :
-                if album in dic.keys():
-                    dic[album]+=point
+        if id in albumDic[name]:
+                if name in dic.keys():
+                    dic[name]+=point
                 else:
-                    dic[album]=point
+                    dic[name]=point
     return dic
 
 # 데이터리스트에 필터를 적용한 후 곡별 순위카운트 딕셔너리를 구한다.
@@ -200,12 +199,11 @@ filteredList = [d for d in filter(f6, datalist)]
 musicDic = createMusicCountDic(filteredList)
 totalRanks = getTotalRanks(musicDic)
 totalDic = { id: (rank,name,point) for rank,id,name,point in totalRanks }
-totalAlbumDic = getAlbumPoint(totalRanks)
+
 
 # 출력부
 print("데이터 갯수 : ","%3d/%3d" % (len(filteredList),len(datalist)))
 for rank in totalRanks:
     print(rank)
 
-print(totalAlbumDic)
 printRank4()
