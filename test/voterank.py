@@ -109,7 +109,7 @@ def printRank5():
                 for name in albumDic.keys():
                     totAlbumDic = getAlbumPoint(totranks, name)
                     print("{}입덕 {}명 : {} 앨범 점수 {}점".format(i, len(flst), name, int(totAlbumDic[name]/len(flst))))
-            if i == "전체":
+            elif i == "전체":
                 msdic = createMusicCountDic(datalist)
                 totranks = getTotalRanks(msdic)
                 for name in albumDic.keys():
@@ -183,7 +183,7 @@ albumDic = {
 # 결과 파일을 읽어서 딕셔너리의 리스트로 만든다...
 with open('result.txt', 'r') as f:
     lines = f.readlines()
-    datalist = list(map(lineToDic, lines))
+    rawdata = list(map(lineToDic, lines))
 
 
 
@@ -205,9 +205,9 @@ def createMusicCountDic(list):
 # input list [(rank,id,name,points)],id(str)
 # output dict {albumID:points.avg}
 # 앨범 별 총점을 계산한다
-def getAlbumPoint(datalist,name):
+def getAlbumPoint(data,name):
     dic = {}
-    for _,id,_,point in datalist:
+    for _,id,_,point in data:
         if id in albumDic[name]:
                 if name in dic.keys():
                     dic[name]+=point
@@ -216,6 +216,7 @@ def getAlbumPoint(datalist,name):
     return dic
 
 # 데이터리스트에 필터를 적용한 후 곡별 순위카운트 딕셔너리를 구한다.
+datalist = [d for d in filter(f1, rawdata)]
 musicDic = createMusicCountDic(datalist)
 totalRanks = getTotalRanks(musicDic)
 totalDic = { id: (rank, name, point) for rank, id, name, point in totalRanks }
