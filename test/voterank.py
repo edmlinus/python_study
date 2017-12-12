@@ -75,8 +75,8 @@ def printRank3():
     while id != "Q":
         id = input(">>")
         if id != "Q":
-            if id in totalAlbumDic.keys():
-                print("{} : {}".format(id,totalAlbumDic[id]))
+            if id in albumDic.keys():
+                print("{} : {}".format(id,getAlbumPoint(totalRanks,id)))
             else:
                 print("앨범아이디를 찾을 수 없습니다")
 # input : albumName output : print(x8) (앨범이름,입덕시기:순위)
@@ -206,4 +206,4 @@ print("데이터 갯수 : ","%3d/%3d" % (len(filteredList),len(datalist)))
 for rank in totalRanks:
     print(rank)
 
-printRank4()
+printRank3()
