@@ -30,7 +30,7 @@ nameDic = {
     "57": "(RUR) 똑똑",
     "58": "(RUR) Night and Day",
     "59": "(RUR) 숨바꼭질",
-    "50": "(Fever) Take Me Somwhere",
+    "50": "(Fever) Take Me Somewhere",
     "61": "(폴인럽) 종소리",
     "62": "(폴인럽) 삼각형",
     "63": "(폴인럽) 그냥",

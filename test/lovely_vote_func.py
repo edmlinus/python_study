@@ -50,27 +50,28 @@ def getStats(it):
     avg = total / sum(it[1].values())
     avg2 = total2 / sum(it[1].values())
     variance = avg2 - avg ** 2
-    return total, avg, math.sqrt(variance)
+    return total, int(avg), int(math.sqrt(variance))
 
 
 # 곡별 순위카운트 딕셔너리를 리턴한다.
 def createMusicCountDic(rank_list):
-    dic = {}
+    msdic = {}
     for data in rank_list:
-        countRank(dic, data["q4"])
-    return dic
+        countRank(msdic, data["q4"])
+    for music_name in msdic.keys():
+        mslist = sorted(msdic[music_name].items(), key=operator.itemgetter(1))
+        mslist.reverse()
+        msdic[music_name] = {pair[0]: pair[1] for _,pair in enumerate(mslist)}
+    return msdic
 
 
-# input list [(rank,id,name,points)],id(str)
+# input list [(rank,id,name,points)],name(str)
 # output dict {albumID:points.avg}
 # 앨범 별 총점을 계산한다
 def getAlbumPoint(data, name):
-    dic = {}
+    total_point = 0
     for _, music_id, _, point in data:
         if music_id in albumDic[name]:
-            if name in dic.keys():
-                dic[name] += point
-            else:
-                dic[name] = point
-    return dic
+            total_point += point
+    return total_point
 
