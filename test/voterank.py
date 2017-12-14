@@ -1,7 +1,7 @@
 from lovely_vote_func import *
 
 
-# input : id  output : print (8회) (입덕시기, (순위, 곡이름, 점수), 인원수)
+# input : id output : print (8회) (입덕시기, (순위, 곡이름, 점수), 인원수)
 def printRank1():
     print("")
     music_id = ""
@@ -17,22 +17,27 @@ def printRank1():
                     print("{}입덕 {}명 : 순위={}, 곡={}, 점수={}".format(i, len(filtered_list), *total_dic[music_id]))
                 else:
                     print("곡아이디를 찾을 수 없습니다.")
-
+# input : 곡id output : 전체표본의, 그리고 입덕 시기별 총점, 순위의 분산
 def printStat():
     print("")
     music_id = ""
     while music_id != "Q":
         music_id = input(">>")
         if music_id != "Q":
-            for i in timeDic.values():
-                filtered_list = [d for d in filter(lambda d: d["q1"] == i, data_list)]
-                msdic = createMusicCountDic(filtered_list)
-                if music_id in msdic.keys():
-                    stats = getStats((music_id,msdic[music_id]))
-                    print("입덕시기가 {}인 {}명에게 total: {}, avg: {}, std: {}".format(i, len(filtered_list), *stats))
-                else:
-                    print("곡아이디를 찾을 수 없습니다.")
-
+            msdic = createMusicCountDic(data_list)
+            if music_id in msdic.keys():
+                total, _, std = getStats((music_id, msdic[music_id]))
+                print("전체표본 total: {}, std: {}".format(total, std))
+                for i in timeDic.values():
+                    filtered_list = [d for d in filter(lambda d: d["q1"] == i, data_list)]
+                    msdic = createMusicCountDic(filtered_list)
+                    if music_id in msdic.keys():
+                        stats = getStats((music_id, msdic[music_id]))
+                        print("입덕시기가 {}인 {}명에게 total: {}, avg:{}, std: {}".format(i, len(filtered_list), *stats))
+                    else:
+                        print("해당 입덕시기에서 데이터를 찾을 수 없습니다")
+            else:
+                print("잘못된 곡 번호 입니다")
 
 # input : id  output : print  (입덕시기, (순위, 곡이름, 점수), 인원수)
 def printRank2():
@@ -116,16 +121,17 @@ f2 = lambda d: d["q2"] == 1  # 두번째 질문에 1로 답한 데이터
 f3 = lambda d: d["q3"] == 1  # 세번째 질문에 1로 답한 데이터
 f4 = lambda d: d["q2"] == 2  # 두번째 질문에 2로 답한 데이터
 f5 = lambda d: d["q3"] == 2  # 세번째 질문에 2로 답한 데이터
-
+f6 = lambda d: d["q1"] == "RUR"
 # 데이터리스트에 필터를 적용한 후 곡별 순위카운트 딕셔너리를 구한다.
-data_list = [d for d in filter(f1, raw_data)]
+data_list = [d for d in filter(f0, raw_data)]
 musicDic = createMusicCountDic(data_list)
 totalRanks = getTotalRanks(musicDic)
 totalDic = {music_id: (rank, name, point) for rank, music_id, name, point in totalRanks}
-
+albumPoints = list(map(albumCounts, data_list))
+albumStats = createAlbumCountDic(albumPoints)
 
 # 출력부
 for rank in totalRanks:
     print(rank)
-
+print(albumStats)
 printStat()

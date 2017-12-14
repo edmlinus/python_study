@@ -1,7 +1,7 @@
 import operator
 import math
 from lovely_dictionaries import nameDic, albumDic, timeDic
-
+import math
 
 # 데이터 문자열 한 라인을 설문답변 데이터 딕셔너리를 만든다.
 def lineToDic(line):
@@ -19,6 +19,42 @@ def rankDic(rankStr):
     list2 = rank_list[0:rank_list.index("99")]
     return {k: v + 1 for v, k in enumerate(list2)}
 
+def albumCounts(dic):
+    abdic = {}
+    data = dic["q4"]
+    for msname,rank in data.items():
+        for abname in albumDic.keys():
+            if msname in albumDic[abname]:
+                if abname in abdic.keys():
+                    abdic[abname].append(37-rank)
+                else:
+                    abdic[abname] = [37-rank]
+    for abname in abdic.keys():
+        abdic[abname] = int(sum(abdic[abname])/len(abdic[abname]))
+    return abdic
+
+##
+def countAlbumRank(abdic,data):
+    for abname, point in data.items():
+        if abname in abdic.keys():
+            abdic[abname].append(point)
+        else:
+            abdic[abname]=[point]
+
+##
+def createAlbumCountDic(lst):
+    abdic = {}
+    for data in lst:
+        countAlbumRank(abdic, data)
+    for abname in abdic.keys():
+        total = sum(abdic[abname])
+        total2 = sum(list(map(lambda d: d**2, abdic[abname])))
+        avg = total/len(abdic[abname])
+        avg2 = total2/len(abdic[abname])
+        dev = avg2 - (avg**2)
+        std = math.sqrt(dev)
+        abdic[abname] = (total, int(avg), int(std))
+    return abdic
 
 # mdic 에 rank(순위 딕셔너리)를 받아 카운트를 갱신한다.
 def countRank(mdic, rank):
@@ -61,7 +97,7 @@ def createMusicCountDic(rank_list):
     for music_name in msdic.keys():
         mslist = sorted(msdic[music_name].items(), key=operator.itemgetter(1))
         mslist.reverse()
-        msdic[music_name] = {pair[0]: pair[1] for _,pair in enumerate(mslist)}
+        msdic[music_name] = {pair[0]: pair[1] for pair in mslist}
     return msdic
 
 
