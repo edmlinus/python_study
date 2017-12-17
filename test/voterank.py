@@ -47,7 +47,7 @@ def printRank2():
         music_id = input(">>")
         if music_id != "Q":
             if music_id in musicDic.keys():
-                print(totalDic[music_id], "\n", musicDic[music_id])
+                print(totalDic[music_id], "\n", musicDic[music_id], "\n", avgDic[music_id])
             else:
                 print("곡아이디를 찾을 수 없습니다.")
 
@@ -121,11 +121,13 @@ f2 = lambda d: d["q2"] == 1  # 두번째 질문에 1로 답한 데이터
 f3 = lambda d: d["q3"] == 1  # 세번째 질문에 1로 답한 데이터
 f4 = lambda d: d["q2"] == 2  # 두번째 질문에 2로 답한 데이터
 f5 = lambda d: d["q3"] == 2  # 세번째 질문에 2로 답한 데이터
-f6 = lambda d: d["q1"] == "RUR"
+f6 = lambda d: d["q1"] == "뉴트릴"
 # 데이터리스트에 필터를 적용한 후 곡별 순위카운트 딕셔너리를 구한다.
-data_list = [d for d in filter(f0, raw_data)]
+data_list = [d for d in filter(f2, raw_data)]
 musicDic = createMusicCountDic(data_list)
 totalRanks = getTotalRanks(musicDic)
+avgRanks = getAvgRanks(musicDic)
+avgDic = {music_id: (name, rank) for music_id, name, rank in avgRanks}
 totalDic = {music_id: (rank, name, point) for rank, music_id, name, point in totalRanks}
 albumPoints = list(map(albumCounts, data_list))
 albumStats = createAlbumCountDic(albumPoints)
@@ -133,5 +135,5 @@ albumStats = createAlbumCountDic(albumPoints)
 # 출력부
 for rank in totalRanks:
     print(rank)
-print(albumStats)
-printStat()
+printRank2()
+

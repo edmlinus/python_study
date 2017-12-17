@@ -1,7 +1,7 @@
 import operator
 import math
 from lovely_dictionaries import nameDic, albumDic, timeDic
-import math
+
 
 # 데이터 문자열 한 라인을 설문답변 데이터 딕셔너리를 만든다.
 def lineToDic(line):
@@ -19,10 +19,11 @@ def rankDic(rankStr):
     list2 = rank_list[0:rank_list.index("99")]
     return {k: v + 1 for v, k in enumerate(list2)}
 
+
 def albumCounts(dic):
     abdic = {}
     data = dic["q4"]
-    for msname,rank in data.items():
+    for msname, rank in data.items():
         for abname in albumDic.keys():
             if msname in albumDic[abname]:
                 if abname in abdic.keys():
@@ -33,13 +34,15 @@ def albumCounts(dic):
         abdic[abname] = int(sum(abdic[abname])/len(abdic[abname]))
     return abdic
 
+
 ##
-def countAlbumRank(abdic,data):
+def countAlbumRank(abdic, data):
     for abname, point in data.items():
         if abname in abdic.keys():
             abdic[abname].append(point)
         else:
-            abdic[abname]=[point]
+            abdic[abname] = [point]
+
 
 ##
 def createAlbumCountDic(lst):
@@ -55,6 +58,7 @@ def createAlbumCountDic(lst):
         std = math.sqrt(dev)
         abdic[abname] = (total, int(avg), int(std))
     return abdic
+
 
 # mdic 에 rank(순위 딕셔너리)를 받아 카운트를 갱신한다.
 def countRank(mdic, rank):
@@ -80,6 +84,20 @@ def getTotalRanks(mdic):
     return [(k + 1, v[0], nameDic[v[0]], v[1]) for k, v in enumerate(ranks)]
 
 
+def getAvgRanks(mdic):
+    res = {}
+    for it in mdic.items():
+        res[it[0]] = getRank(it)
+    ranks = sorted(res.items(), key=operator.itemgetter(1))
+    return [(v[0], nameDic[v[0]], v[1]) for v in ranks]
+
+
+def getRank(it):
+    totalRanks = sum(rank*counts for rank, counts in it[1].items())
+    totalCount = sum(counts for _, counts in it[1].items())
+    return totalRanks / totalCount
+
+
 def getStats(it):
     total = sum([(37 - k) * v for k, v in it[1].items()])
     total2 = sum([(37 - k) ** 2 * v for k, v in it[1].items()])
@@ -95,8 +113,7 @@ def createMusicCountDic(rank_list):
     for data in rank_list:
         countRank(msdic, data["q4"])
     for music_name in msdic.keys():
-        mslist = sorted(msdic[music_name].items(), key=operator.itemgetter(1))
-        mslist.reverse()
+        mslist = sorted(msdic[music_name].items(), key=operator.itemgetter(0))
         msdic[music_name] = {pair[0]: pair[1] for pair in mslist}
     return msdic
 
@@ -110,4 +127,3 @@ def getAlbumPoint(data, name):
         if music_id in albumDic[name]:
             total_point += point
     return total_point
-
